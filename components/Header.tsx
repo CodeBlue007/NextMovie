@@ -1,8 +1,10 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
 import styles from './Header.module.scss'
-import {oswald} from '@/styles/fonts'
-
+import { oswald } from '@/styles/fonts'
+import { usePathname } from 'next/navigation'
 
 const menus = [
   {
@@ -20,6 +22,7 @@ const menus = [
 ]
 
 export default function Header() {
+  const pathname = usePathname()
   return (
     <header className={styles.header}>
       <Link
@@ -30,7 +33,9 @@ export default function Header() {
       <nav className={styles.nav}>
         <ul>
           {menus.map(menu => (
-            <li key={menu.name}>
+            <li
+              key={menu.name}
+              className={pathname === menu.href ? styles.active : ''}>
               <Link href={menu.href}>{menu.name}</Link>
             </li>
           ))}

@@ -21,9 +21,11 @@ export default function SearchBar() {
         onChange={e => moviesStore.setSearchText(e.target.value)}
         onKeyDown={handleKeyDown}
       />
-      <Button>Reset</Button>
+      <Button onClick={() => moviesStore.resetMovies()}>Reset</Button>
       <Button
         color="primary"
+        loading={moviesStore.loading}
+        loadingColor="dark"
         onClick={() => moviesStore.searchMovies()}>
         Search
       </Button>

@@ -1,4 +1,5 @@
 import styles from './Button.module.scss'
+import Loader from './Loader'
 
 export default function Button({
   children,
@@ -21,7 +22,7 @@ export default function Button({
       ${circle ? styles.circle : ''} 
       `}
       {...restProps}>
-      {loading ? <p>loading</p> : children}
+      {loading ? <Loader /> : children}
     </button>
   )
 }

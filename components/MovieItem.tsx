@@ -1,8 +1,8 @@
-import { SimpleMovie } from '@/store/movies'
-import { useRouter } from 'next/navigation'
-import styles from './MovieItem.module.scss'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import type { SimpleMovie } from '@/store/movies'
+import styles from './MovieItem.module.scss'
 import Button from '@/components/Button'
 
 export default function MovieItem({ movie }: { movie: SimpleMovie }) {
@@ -14,14 +14,16 @@ export default function MovieItem({ movie }: { movie: SimpleMovie }) {
         onClick={() => router.push(`/poster/${movie.imdbID}`)}>
         👀
       </Button>
-      <Link href={`movies/${movie.imdbID}`}>
+      <Link
+        prefetch
+        href={`/movies/${movie.imdbID}`}>
         <Image
           src={movie.Poster}
           alt={movie.Title}
-          width={200}
-          height={300}
+          width="200"
+          height="300"
         />
-        <div>
+        <div className={styles.info}>
           <p>{movie.Year}</p>
           <h3>{movie.Title}</h3>
         </div>

@@ -1,5 +1,12 @@
 import { create } from 'zustand'
 
+type ResponseValue = {
+  Search: Movies
+  totalResults: string
+  Response: 'True' | 'False'
+  Error: string
+}
+
 export type Movies = SimpleMovie[]
 export interface SimpleMovie {
   Title: string
@@ -43,20 +50,44 @@ export const useMovieStore = create<{
   searchText: string
   movies: Movies
   loading: boolean
+  message: string
   setSearchText: (text: string) => void
-  searchMovies: () => void
+  searchMovies: () => Promise<void>
+  resetMovies: () => void
 }>((set, get) => ({
   searchText: '',
   movies: [],
   loading: false,
+  message: '검색어를 입력해주세여',
   setSearchText: text => set({ searchText: text }),
   searchMovies: async () => {
-    const { searchText } = get()
+    const { searchText, loading } = get()
+    if (!searchText.trim()) {
+      set({ searchText: '' })
+      return
+    }
+    if (loading) return
+    set({ loading: true })
     const res = await fetch(`/api/movies?title=${searchText}`)
-    const movies = await res.json()
-    console.log(movies)
+    const data: ResponseValue = await res.json()
+    const { Search, Response, Error } = data
+
+    if (Response === 'False') {
+      set({
+        movies: [],
+        loading: false,
+        message: Error
+      })
+      return
+    }
+
     set({
-      movies
+      movies: Search,
+      loading: false,
+      message: ''
     })
+  },
+  resetMovies: () => {
+    set({ searchText: '', movies: [], loading: false, message: '' })
   }
 }))
