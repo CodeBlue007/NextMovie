@@ -31,6 +31,28 @@ export interface Image {
   photo: string
 }
 
+export async function generateMetadata() {
+  const res = await fetch('https://api.heropy.dev/v0/whoami', {
+    cache: 'no-store'
+  })
+  const data: Whoami = await res.json()
+  const title = data.name.ko
+  const description = data.resumeHighlights.join(' / ')
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      type: 'website',
+      images: data.image.photo,
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/about`,
+      description,
+      siteName: process.env.NEXT_PUBLIC_SITE_NAME,
+      locale: 'ko_KR'
+    }
+  }
+}
+
 export default async function About() {
   const res = await fetch('https://api.heropy.dev/v0/whoami', {
     cache: 'no-store'

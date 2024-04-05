@@ -3,16 +3,41 @@ import Image from 'next/image'
 import styles from './page.module.scss'
 import { oswald } from '@/styles/fonts'
 import Link from 'next/link'
+import { Metadata } from 'next'
 
-export default async function MovieDetail({
-  params: { id }
-}: {
+type Context = {
   params: { id: string }
-}) {
+}
+
+async function getMovie(id: string): Promise<DetailedMovie> {
   const res = await fetch(
     `https://omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&i=${id}&plot=full`
   )
-  const movie: DetailedMovie = await res.json()
+  return await res.json()
+}
+
+export async function generateMetadata({
+  params: { id }
+}: Context): Promise<Metadata> {
+  const movie = await getMovie(id)
+
+  return {
+    title: movie.Title,
+    description: movie.Plot,
+    openGraph: {
+      title: movie.Title,
+      description: movie.Plot,
+      type: 'website',
+      images: movie.Poster,
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/movies/${id}`,
+      siteName: process.env.NEXT_PUBLIC_SITE_NAME,
+      locale: 'ko_KR'
+    }
+  }
+}
+
+export default async function MovieDetail({ params: { id } }: Context) {
+  const movie = await getMovie(id)
   return (
     <section className={styles.movieDetails}>
       <Link href={`/poster/${id}`}>

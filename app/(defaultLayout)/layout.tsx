@@ -1,6 +1,10 @@
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 
+const metadata = {
+  title: 'Search'
+}
+
 export default function DefaultLayout({
   children,
   posterModal
